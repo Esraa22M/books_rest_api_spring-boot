@@ -2,6 +2,8 @@ package com.esraa_spring_boot.books.controller;
 
 import com.esraa_spring_boot.books.entity.Book;
 import com.esraa_spring_boot.books.request.BookRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
+@Tag(name = "Books Rest Api Endpoint" , description = "Operations related to books")
 public class BookController {
     private final List<Book>books=new ArrayList<>();
     public BookController(){
@@ -29,10 +32,10 @@ public class BookController {
 
     }
 //    @GetMapping("/api/books")
-//    public List<Book> getBooks(){
+//    public List<Book> getBooks()
 //       return  books;
 //    }
-
+@Operation(summary = "getting book by id", description = "an endpoint to retrieve specific book by its id")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable  @Min(value = 1) long id){
@@ -43,6 +46,8 @@ public class BookController {
         return books.stream().filter(book -> book.getId()==id).findFirst().orElse(null);
     }
     /** filtered by category and return list of books**/
+
+    @Operation(summary = "Get all books" , description = "endpoint for fetching all books")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<Book>getBooks(@RequestParam(required = false) String category){
@@ -50,6 +55,7 @@ public class BookController {
             return books;
         return books.stream().filter(book -> book.getCategory().equalsIgnoreCase(category)).toList();
     }
+    @Operation(summary = "adding new book to the list", description = "an endpoint to add new book to the list of books")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public void createBook( @Valid @RequestBody BookRequest newBook){
@@ -66,6 +72,7 @@ public class BookController {
             Book book = convertToBook(id , newBook);
         books.add(book);
     }
+    @Operation(summary = "updating the details of specific book", description = "an endpoint to update the details of the book")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     public void updateBook(@PathVariable @Min(value = 1) long id , @RequestBody BookRequest bookRequest){
@@ -77,6 +84,7 @@ public class BookController {
             }
         }
     }
+    @Operation(summary = "delete book", description = "endpoint to delete book by its id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable @Min(value = 1) long id){
