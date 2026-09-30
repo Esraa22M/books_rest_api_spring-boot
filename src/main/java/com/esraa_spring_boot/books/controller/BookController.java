@@ -3,6 +3,7 @@ package com.esraa_spring_boot.books.controller;
 import com.esraa_spring_boot.books.entity.Book;
 import com.esraa_spring_boot.books.request.BookRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -38,7 +39,7 @@ public class BookController {
 @Operation(summary = "getting book by id", description = "an endpoint to retrieve specific book by its id")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable  @Min(value = 1) long id){
+    public Book getBookById(@Parameter(description = "Id of the book to be retrieved") @PathVariable  @Min(value = 1) long id){
 //        for(Book book : books){
 //            if(book.getTitle().equalsIgnoreCase(title))
 //                return  book;
@@ -50,7 +51,7 @@ public class BookController {
     @Operation(summary = "Get all books" , description = "endpoint for fetching all books")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<Book>getBooks(@RequestParam(required = false) String category){
+    public List<Book>getBooks(@Parameter(description = "optional query parameter") @RequestParam(required = false) String category){
         if(category== null)
             return books;
         return books.stream().filter(book -> book.getCategory().equalsIgnoreCase(category)).toList();
@@ -75,7 +76,7 @@ public class BookController {
     @Operation(summary = "updating the details of specific book", description = "an endpoint to update the details of the book")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
-    public void updateBook(@PathVariable @Min(value = 1) long id , @RequestBody BookRequest bookRequest){
+    public void updateBook(@Parameter(description = "id of the book to be updated") @PathVariable @Min(value = 1) long id , @RequestBody BookRequest bookRequest){
         for(int i = 0 ; i < books.size(); i++){
             Book updatedBook = convertToBook(id , bookRequest);
             if(books.get(i).getId()==id){
@@ -87,7 +88,7 @@ public class BookController {
     @Operation(summary = "delete book", description = "endpoint to delete book by its id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable @Min(value = 1) long id){
+    public void deleteBook(@Parameter(description = "Id of the book to be deleted")@PathVariable @Min(value = 1) long id){
         books.removeIf(book -> book.getId()==id);
     }
     private Book convertToBook(long id , BookRequest newBook){
