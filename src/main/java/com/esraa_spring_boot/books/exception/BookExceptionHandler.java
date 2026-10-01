@@ -1,0 +1,21 @@
+package com.esraa_spring_boot.books.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+@ControllerAdvice
+public class BookExceptionHandler {
+    @ExceptionHandler
+    public ResponseEntity<BookErrorResponse> handleException(BookNotFoundException bookNotFoundException) {
+        BookErrorResponse bookErrorResponse = new BookErrorResponse(HttpStatus.NOT_FOUND.value(), bookNotFoundException.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(bookErrorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<BookErrorResponse> handleException(Exception exception) {
+        BookErrorResponse bookErrorResponse = new BookErrorResponse(HttpStatus.BAD_REQUEST.value(), "invalid request", System.currentTimeMillis());
+        return new ResponseEntity<>(bookErrorResponse, HttpStatus.BAD_REQUEST);
+    }
+}
